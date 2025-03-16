@@ -18,7 +18,7 @@ func NewPage(blockSize int) *Page {
 }
 
 // Creates a new page from an existing byte slice
-func newPageFromBytes(b []byte) *Page {
+func NewPageFromBytes(b []byte) *Page {
 	return &Page{
 		contents: b,
 	}
@@ -78,7 +78,7 @@ func (p *Page) SetString(offset int, s string) {
 }
 
 // Calculates the maximum length needed to store a string
-func (p *Page) MaxLength(strlen int) int {
+func MaxLength(strlen int) int {
 	// In Go, we can use utf8.UTFMax for the maximum bytes per character
 	// However, since we`re using ASCII, we can use 1 byte per character
 	bytesPerChar := 1
