@@ -32,7 +32,7 @@ func NewSetStringRecord(p *file.Page) *SetStringRecord {
 
 	// Calculate position of block number by skipping the filename
 	// Maxlength returns the space needed for the filename in the page
-	bpos := fpos + p.MaxLength(len(filename))
+	bpos := fpos + file.MaxLength(len(filename))
 	// Read block number from calculated position
 	blockNumber := p.GetInt(bpos)
 	// Create new BLOCKID using filename and block number

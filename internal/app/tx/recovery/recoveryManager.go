@@ -10,12 +10,12 @@ type RecoveryManager struct {
 	lm          *log.LogManager
 	bm          *buffer.BufferManager
 	transaction *tx.Transaction
-	txnum       int
+	txnum       int64
 }
 
 func (rm *RecoveryManager) NewRecoveryManager(
 	tx *tx.Transaction,
-	txnum int,
+	txnum int64,
 	lm *log.LogManager,
 	bm *buffer.BufferManager) *RecoveryManager {
 
