@@ -84,8 +84,8 @@ func (tx *Transaction) Pin(block file.BlockID) {
 }
 
 // Unpins indicates that a block is no longer needed
-func (tx *Transaction) Unpin(block file.BlockID) {
-	tx.myBuffers.Unpin(block)
+func (tx *Transaction) Unpin(block *file.BlockID) {
+	tx.myBuffers.Unpin(*block)
 }
 
 // DATA ACCESS OPERATIONS
