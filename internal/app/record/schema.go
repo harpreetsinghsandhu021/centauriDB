@@ -50,8 +50,8 @@ func (s *Schema) AddStringField(fieldName string, length int) {
 // Adds a field to the schema having the same type and length
 // as the corresponding field in another schema.
 func (s *Schema) Add(fieldName string, schema *Schema) {
-	dataType := schema.dataType(fieldName)
-	length := schema.length(fieldName)
+	dataType := schema.DataType(fieldName)
+	length := schema.Length(fieldName)
 
 	s.AddField(fieldName, dataType, length)
 }
@@ -79,7 +79,7 @@ func (s *Schema) hasField(fieldname string) bool {
 }
 
 // Returns the type of specified field.
-func (s *Schema) dataType(fieldname string) FieldType {
+func (s *Schema) DataType(fieldname string) FieldType {
 	info, ok := s.info[fieldname]
 
 	if !ok {
@@ -92,7 +92,7 @@ func (s *Schema) dataType(fieldname string) FieldType {
 // Returns the conceptual length of the specified field.
 // If the field is not a string field, then the return
 // value is undefined.
-func (s *Schema) length(fieldname string) int {
+func (s *Schema) Length(fieldname string) int {
 	info, ok := s.info[fieldname]
 
 	if !ok {

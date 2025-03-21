@@ -64,11 +64,11 @@ func (l *Layout) SlotSize() int {
 
 // Returns the number of bytes required to store the specified field
 func lengthInBytes(schema *Schema, fieldname string) int {
-	fieldType := schema.dataType(fieldname)
+	fieldType := schema.DataType(fieldname)
 
 	if fieldType == INTEGER {
 		return int(unsafe.Sizeof(int(0)))
 	} else {
-		return file.MaxLength(schema.length(fieldname))
+		return file.MaxLength(schema.Length(fieldname))
 	}
 }

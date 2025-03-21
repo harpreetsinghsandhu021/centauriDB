@@ -72,7 +72,7 @@ func (rp *RecordPage) format() {
 		schema := rp.layout.Schema()
 		for _, fieldname := range schema.Fields() {
 			fieldPos := rp.offset(slot) + rp.layout.Offset(fieldname)
-			if schema.dataType(fieldname) == INTEGER {
+			if schema.DataType(fieldname) == INTEGER {
 				rp.tx.SetInt(*rp.block, fieldPos, 0, false)
 			} else {
 				rp.tx.SetString(*rp.block, fieldPos, "", false)
