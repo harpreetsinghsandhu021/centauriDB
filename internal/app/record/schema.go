@@ -69,7 +69,7 @@ func (s *Schema) Fields() []string {
 }
 
 // Returns true if the specified field exists in the schema.
-func (s *Schema) hasField(fieldname string) bool {
+func (s *Schema) HasField(fieldname string) bool {
 	for _, name := range s.fields {
 		if name == fieldname {
 			return true
