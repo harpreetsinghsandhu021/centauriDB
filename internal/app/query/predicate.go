@@ -21,9 +21,9 @@ func NewPredicate() *Predicate {
 
 // Creates a predicate containing a single term.
 // for e.g, a term might be "age > 21".
-func NewPredicateWithTerm(t Term) *Predicate {
+func NewPredicateWithTerm(t *Term) *Predicate {
 	return &Predicate{
-		terms: []Term{t},
+		terms: []Term{*t},
 	}
 }
 
