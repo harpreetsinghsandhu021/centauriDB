@@ -133,7 +133,7 @@ func (ts *TableScan) Delete() {
 
 // Checks if the table has a field with the given name
 func (ts *TableScan) HasField(fieldname string) bool {
-	return ts.layout.Schema().hasField(fieldname)
+	return ts.layout.Schema().HasField(fieldname)
 }
 
 // Positions the scanner at a specific record identified by RID

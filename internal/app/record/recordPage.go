@@ -24,7 +24,7 @@ func NewRecordPage(tx *tx.Transaction, block *file.BlockID, layout *Layout) *Rec
 		layout: layout,
 	}
 
-	tx.Pin(*block)
+	tx.Pin(block)
 
 	return rp
 }

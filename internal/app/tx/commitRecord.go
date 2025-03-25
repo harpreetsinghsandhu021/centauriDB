@@ -32,7 +32,7 @@ func (cr *CommitRecord) TxNumber() int {
 
 // Defines how to reverse a COMMIT operation
 // Does nothing because a start record contains no undo information.
-func (cr *CommitRecord) undo(tx *Transaction)
+func (cr *CommitRecord) undo(tx *Transaction) {}
 
 func (cr *CommitRecord) String() string {
 	return fmt.Sprintf("<START %t>", cr.txNum)

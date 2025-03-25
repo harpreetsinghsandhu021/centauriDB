@@ -26,7 +26,7 @@ func (cp *CheckPointRecord) TxNumber() int {
 
 // Defines how to reverse a CHECKPOINT operation
 // Does nothing because a checkpoint record contains no undo information.
-func (cp *CheckPointRecord) undo(tx *Transaction)
+func (cp *CheckPointRecord) undo(tx *Transaction) {}
 
 func (cp *CheckPointRecord) String() string {
 	return "<CHECKPOINT>"
