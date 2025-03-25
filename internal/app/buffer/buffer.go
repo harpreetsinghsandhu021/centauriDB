@@ -54,6 +54,14 @@ func (b *Buffer) IsPinned() bool {
 	return b.pins > 0
 }
 
+func (b *Buffer) Pins() int {
+	return b.pins
+}
+
+func (b *Buffer) LastSequenceNumber() int {
+	return b.lsn
+}
+
 // Returns the id of the transaction that last modified this buffer.
 func (b *Buffer) ModifyingTx() int {
 	return b.txnum
