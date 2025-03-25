@@ -4,7 +4,6 @@ import (
 	"centauri/internal/app/buffer"
 	"centauri/internal/app/file"
 	"centauri/internal/app/log"
-	"centauri/internal/app/tx/concurrency"
 	"fmt"
 	"sync/atomic"
 )
@@ -16,7 +15,7 @@ const EndOfFile = -1       // Represents the end of file marker for block operat
 // recovery, and concurrency control
 type Transaction struct {
 	rm        *RecoveryManager
-	cm        *concurrency.ConcurrencyManager
+	cm        *ConcurrencyManager
 	bm        *buffer.BufferManager
 	fm        *file.FileManager
 	lm        *log.LogManager
@@ -35,7 +34,7 @@ func NewTransaction(fm *file.FileManager, lm *log.LogManager, bm *buffer.BufferM
 	}
 
 	tx.rm = tx.rm.NewRecoveryManager(tx, txNum, lm, bm)
-	tx.cm = concurrency.NewConcurrencyManager(nil)
+	tx.cm = NewConcurrencyManager(nil)
 	tx.myBuffers = NewBufferList(bm)
 
 	return tx

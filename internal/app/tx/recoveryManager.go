@@ -25,7 +25,7 @@ func (rm *RecoveryManager) NewRecoveryManager(
 		txnum:       txnum,
 	}
 
-	StartRecord.writeToLog(lm, txnum)
+	recovery.writeToLog(lm, txnum)
 
 	return recoveryManager
 }

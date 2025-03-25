@@ -1,9 +1,8 @@
-package recovery
+package tx
 
 import (
 	"centauri/internal/app/file"
 	"centauri/internal/app/log"
-	"centauri/internal/app/tx"
 	"fmt"
 )
 
@@ -69,9 +68,9 @@ func (r *SetStringRecord) String() string {
 	return fmt.Sprintf("<SETSTRING %d %v %d %s", r.txnum, r.block, r.offset, r.val)
 }
 
-func (r *SetStringRecord) Undo(tx tx.Transaction) {
-	tx.Pin(r.block)
-	tx.SetString(r.block, r.offset, r.val, false) // dont`t log the undo
+func (r *SetStringRecord) Undo(tx Transaction) {
+	tx.Pin(*r.block)
+	tx.SetString(*r.block, r.offset, r.val, false) // dont`t log the undo
 	tx.Unpin(r.block)
 }
 
