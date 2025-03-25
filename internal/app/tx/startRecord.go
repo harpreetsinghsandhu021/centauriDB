@@ -34,7 +34,7 @@ func (sr *StartRecord) TxNumber() int {
 
 // Defines how to reverse a START operation
 // Does nothing because a start record contains no undo information.
-func undo(tx *Transaction)
+func undo(tx *Transaction) {}
 
 func (sr *StartRecord) String() string {
 	return fmt.Sprintf("<START %t>", sr.txNum)

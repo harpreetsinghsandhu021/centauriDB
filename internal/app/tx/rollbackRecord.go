@@ -33,7 +33,7 @@ func (rb *RollbackRecord) TxNumber() int {
 
 // Defines how to reverse a ROLLBACK operation
 // Does nothing because a rollback record contains no undo information.
-func (rb *RollbackRecord) undo(tx *Transaction)
+func (rb *RollbackRecord) undo(tx *Transaction) {}
 
 func (rb *RollbackRecord) String() string {
 	return fmt.Sprintf("<START %t>", rb.txNum)
