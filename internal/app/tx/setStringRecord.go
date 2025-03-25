@@ -1,15 +1,15 @@
-package recovery
+package tx
 
 import (
 	"centauri/internal/app/file"
 	"centauri/internal/app/log"
-	"centauri/internal/app/tx"
 	"fmt"
 )
 
 // Represents a log record that stores information about a string modification
 // in a transaction.
 type SetStringRecord struct {
+	LogRecord
 	txnum  int           // Transaction identifier
 	offset int           // Position within the block
 	val    string        // The string value being set
@@ -69,9 +69,9 @@ func (r *SetStringRecord) String() string {
 	return fmt.Sprintf("<SETSTRING %d %v %d %s", r.txnum, r.block, r.offset, r.val)
 }
 
-func (r *SetStringRecord) Undo(tx tx.Transaction) {
+func (r *SetStringRecord) undo(tx Transaction) {
 	tx.Pin(r.block)
-	tx.SetString(r.block, r.offset, r.val, false) // dont`t log the undo
+	tx.SetString(*r.block, r.offset, r.val, false) // dont`t log the undo
 	tx.Unpin(r.block)
 }
 

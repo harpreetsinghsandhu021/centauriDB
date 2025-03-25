@@ -4,7 +4,6 @@ import (
 	"centauri/internal/app/buffer"
 	"centauri/internal/app/file"
 	"centauri/internal/app/log"
-	"centauri/internal/app/tx/concurrency"
 	"fmt"
 	"sync/atomic"
 )
@@ -16,7 +15,7 @@ const EndOfFile = -1       // Represents the end of file marker for block operat
 // recovery, and concurrency control
 type Transaction struct {
 	rm        *RecoveryManager
-	cm        *concurrency.ConcurrencyManager
+	cm        *ConcurrencyManager
 	bm        *buffer.BufferManager
 	fm        *file.FileManager
 	lm        *log.LogManager
@@ -34,8 +33,8 @@ func NewTransaction(fm *file.FileManager, lm *log.LogManager, bm *buffer.BufferM
 		lm:    lm,
 	}
 
-	tx.rm = tx.rm.NewRecoveryManager(tx, txNum, lm, bm)
-	tx.cm = concurrency.NewConcurrencyManager(nil)
+	tx.rm = tx.rm.NewRecoveryManager(tx, int(txNum), lm, bm)
+	tx.cm = NewConcurrencyManager(nil)
 	tx.myBuffers = NewBufferList(bm)
 
 	return tx
@@ -78,8 +77,8 @@ func (tx *Transaction) Recover() {
 // Pins a block to prevent it from being discarded
 // Parameters:
 //   - block: The BlockID of the block to be unpinned
-func (tx *Transaction) Pin(block file.BlockID) {
-	tx.myBuffers.Pin(block)
+func (tx *Transaction) Pin(block *file.BlockID) {
+	tx.myBuffers.Pin(*block)
 }
 
 // Unpins indicates that a block is no longer needed

@@ -1,8 +1,7 @@
-package recovery
+package tx
 
 import (
 	"centauri/internal/app/file"
-	"centauri/internal/app/tx"
 )
 
 // Represents the type of log record
@@ -20,7 +19,7 @@ const (
 type LogRecord interface {
 	Op() LogRecordType
 	TxNumber() int
-	Undo(txnum *tx.Transaction)
+	Undo(txnum *Transaction)
 }
 
 // Creates a new log record from bytes
@@ -38,10 +37,11 @@ func CreateLogRecord(bytes []byte) LogRecord {
 	case ROLLBACK:
 		return NewRollbackRecord(p)
 	case SETINT:
-		return SetIntRecord(p)
+		return NewSetIntRecord(p)
 	case SETSTRING:
 		return NewSetStringRecord(p)
 	default:
 		return nil
 	}
+
 }
