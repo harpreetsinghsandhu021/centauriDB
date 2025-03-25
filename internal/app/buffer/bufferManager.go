@@ -84,7 +84,7 @@ func (bm *BufferManager) Pin(block *file.BlockID) (*Buffer, error) {
 	defer bm.mu.Unlock()
 
 	startTime := time.Now()
-	buff, err := bm.tryToPin()
+	buff, err := bm.tryToPin(block)
 	if err != nil {
 		return nil, err
 	}

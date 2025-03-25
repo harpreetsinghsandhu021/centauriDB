@@ -62,6 +62,7 @@ func initKeywords() map[string]bool {
 		"as":      true,
 		"index":   true,
 		"on":      true,
+		"join":    true,
 	}
 	return keywords
 }

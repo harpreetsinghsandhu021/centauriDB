@@ -1,20 +1,19 @@
-package recovery
+package tx
 
 import (
 	"centauri/internal/app/buffer"
 	"centauri/internal/app/log"
-	"centauri/internal/app/tx"
 )
 
 type RecoveryManager struct {
 	lm          *log.LogManager
 	bm          *buffer.BufferManager
-	transaction *tx.Transaction
+	transaction *Transaction
 	txnum       int64
 }
 
 func (rm *RecoveryManager) NewRecoveryManager(
-	tx *tx.Transaction,
+	tx *Transaction,
 	txnum int64,
 	lm *log.LogManager,
 	bm *buffer.BufferManager) *RecoveryManager {

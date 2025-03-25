@@ -5,7 +5,6 @@ import (
 	"centauri/internal/app/file"
 	"centauri/internal/app/log"
 	"centauri/internal/app/tx/concurrency"
-	"centauri/internal/app/tx/recovery"
 	"fmt"
 	"sync/atomic"
 )
@@ -16,7 +15,7 @@ const EndOfFile = -1       // Represents the end of file marker for block operat
 // Represents an individual database transaction. It coordinates buffer management,
 // recovery, and concurrency control
 type Transaction struct {
-	rm        *recovery.RecoveryManager
+	rm        *RecoveryManager
 	cm        *concurrency.ConcurrencyManager
 	bm        *buffer.BufferManager
 	fm        *file.FileManager
