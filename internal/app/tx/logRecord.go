@@ -37,10 +37,11 @@ func CreateLogRecord(bytes []byte) LogRecord {
 	case ROLLBACK:
 		return NewRollbackRecord(p)
 	case SETINT:
-		return SetIntRecord(p)
+		return NewSetIntRecord(p)
 	case SETSTRING:
 		return NewSetStringRecord(p)
 	default:
 		return nil
 	}
+
 }

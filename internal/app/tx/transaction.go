@@ -33,7 +33,7 @@ func NewTransaction(fm *file.FileManager, lm *log.LogManager, bm *buffer.BufferM
 		lm:    lm,
 	}
 
-	tx.rm = tx.rm.NewRecoveryManager(tx, txNum, lm, bm)
+	tx.rm = tx.rm.NewRecoveryManager(tx, int(txNum), lm, bm)
 	tx.cm = NewConcurrencyManager(nil)
 	tx.myBuffers = NewBufferList(bm)
 
@@ -77,8 +77,8 @@ func (tx *Transaction) Recover() {
 // Pins a block to prevent it from being discarded
 // Parameters:
 //   - block: The BlockID of the block to be unpinned
-func (tx *Transaction) Pin(block file.BlockID) {
-	tx.myBuffers.Pin(block)
+func (tx *Transaction) Pin(block *file.BlockID) {
+	tx.myBuffers.Pin(*block)
 }
 
 // Unpins indicates that a block is no longer needed

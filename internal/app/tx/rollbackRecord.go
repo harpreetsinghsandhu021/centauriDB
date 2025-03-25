@@ -9,50 +9,49 @@ import (
 
 // Represents the beginning of a transaction in the log.
 // It contains the transaction number and implements the LogRecord interface.
-type StartRecord struct {
+type RollbackRecord struct {
 	LogRecord
 	txNum int
 }
 
-func NewStartRecord(p *file.Page) *StartRecord {
+func NewRollbackRecord(p *file.Page) *RollbackRecord {
 	tPos := 4
-
-	return &StartRecord{
+	return &RollbackRecord{
 		txNum: int(p.GetInt(tPos)),
 	}
 }
 
-// Returns the operation type constant for START operations
+// Returns the operation type constant for ROLLBACK operations
 // This helps identify the record type when reading from the log.
-func (sr *StartRecord) Op() LogRecordType {
-	return START
+func (rb *RollbackRecord) Op() LogRecordType {
+	return ROLLBACK
 }
 
-func (sr *StartRecord) TxNumber() int {
-	return sr.txNum
+func (rb *RollbackRecord) TxNumber() int {
+	return rb.txNum
 }
 
-// Defines how to reverse a START operation
-// Does nothing because a start record contains no undo information.
-func undo(tx *Transaction)
+// Defines how to reverse a ROLLBACK operation
+// Does nothing because a rollback record contains no undo information.
+func (rb *RollbackRecord) undo(tx *Transaction)
 
-func (sr *StartRecord) String() string {
-	return fmt.Sprintf("<START %t>", sr.txNum)
+func (rb *RollbackRecord) String() string {
+	return fmt.Sprintf("<START %t>", rb.txNum)
 }
 
-// Writes a start record to the transaction log.
+// Writes a rollback record to the transaction log.
 // The record is written as 8 bytes:
 //   - First 4 bytes: START operation code
 //   - Last 4 bytes:  Transaction number
 //
 // Returns:
 //   - LSN (Log sequence number) of the written record
-func writeToLogStartRecord(lm *log.LogManager, txNum int) int {
+func writeToLogRollbackRecord(lm *log.LogManager, txNum int) int {
 	// Create a byte slice with capacity for two 32-bit integers
 	rec := make([]byte, 8)
 
 	// Convert integers to bytes and write them to the slice
-	binary.LittleEndian.PutUint32(rec[0:4], uint32(START))
+	binary.LittleEndian.PutUint32(rec[0:4], uint32(ROLLBACK))
 	binary.LittleEndian.PutUint32(rec[4:8], uint32(txNum))
 
 	// Append to log and return position

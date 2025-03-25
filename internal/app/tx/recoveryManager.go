@@ -9,12 +9,12 @@ type RecoveryManager struct {
 	lm          *log.LogManager
 	bm          *buffer.BufferManager
 	transaction *Transaction
-	txnum       int64
+	txnum       int
 }
 
 func (rm *RecoveryManager) NewRecoveryManager(
 	tx *Transaction,
-	txnum int64,
+	txnum int,
 	lm *log.LogManager,
 	bm *buffer.BufferManager) *RecoveryManager {
 
@@ -25,42 +25,43 @@ func (rm *RecoveryManager) NewRecoveryManager(
 		txnum:       txnum,
 	}
 
-	recovery.writeToLog(lm, txnum)
+	writeToLogStartRecord(lm, txnum)
 
 	return recoveryManager
 }
 
 func (rm *RecoveryManager) Commit() {
 	rm.bm.FlushAll(rm.txnum)
-	lsn := CommitRecord.writeToLog(rm.lm, rm.txnum)
+	lsn := writeToLogCommitRecord(rm.lm, rm.txnum)
 	rm.lm.Flush(lsn)
 }
 
 func (rm *RecoveryManager) Rollback() {
-	doRollback()
+	rm.doRollback()
 	rm.bm.FlushAll(rm.txnum)
-	lsn := RollbackRecord.writeToLog(rm.lm, rm.txnum)
+	lsn := writeToLogRollbackRecord(rm.lm, rm.txnum)
 	rm.lm.Flush(lsn)
 }
 
 func (rm *RecoveryManager) Recover() {
-	doRecover()
+	rm.doRecover()
 	rm.bm.FlushAll(rm.txnum)
-	lsn := CheckPointRecord.writeToLog(rm.lm)
+	lsn := writeToLogCheckpointRecord(rm.lm, rm.txnum)
 	rm.lm.Flush(lsn)
 }
 
-func (rm *RecoveryManager) SetInt(buff buffer.Buffer, offset int, newval int) {
+func (rm *RecoveryManager) SetInt(buff *buffer.Buffer, offset int, newval int) int {
 	oldval := buff.Contents().GetInt(offset)
 	block := buff.Block()
 
-	return SetInRecord.writeToLog(rm.lm, rm.txnum, block, offset, oldval)
+	return WriteToLogIntRecord(rm.lm, rm.txnum, block, offset, int(oldval))
 }
 
-func (rm *RecoveryManager) SetString(buff buffer.Buffer, offset int, newval string) {
+func (rm *RecoveryManager) SetString(buff *buffer.Buffer, offset int, newval string) int {
 	oldVal := buff.Contents().GetString(offset)
 	block := buff.Block()
-	return SetStringRecord.writeToLog(rm.lm, rm.txnum, block, offset, oldVal)
+	val, _ := WriteToLog(rm.lm, rm.txnum, block, offset, oldVal)
+	return val
 }
 
 // Performs a rollback operation for a specific transaction.
