@@ -36,40 +36,55 @@ func NewLogIterator(fm *file.FileManager, blk *file.BlockID) *LogIterator {
 	return iter
 }
 
-// HasNext returns true if there are more log records to read
+// Checks if there are more entries to read in the log.
+// It returns true if either:
+// - The current position hasn't reached the end of the current block
+// - There are previous blocks available (block number > 0)
+// Returns false when we've reached the beginning of the log and consumed all entries.
 func (li *LogIterator) HasNext() bool {
-	return li.currentPos > 4 || li.currentBlock.Number() > 0
+	return li.currentPos < li.fm.BlockSize() || li.currentBlock.Number() > 0
 }
 
-// Next returns the next log record
+// Returns the next record in the log and advances the iterator position.
+// It automatically moves to the previous block if the current position reaches the block size.
+// Returns the record as a byte slice and any error encountered.
+// If successful, the iterator's position is updated to point to the next record.
 func (li *LogIterator) Next() ([]byte, error) {
-	// If we've read all records in the current block, move to the previous block
-	if li.currentPos <= 4 {
-		if li.currentBlock.Number() == 0 {
-			return nil, fmt.Errorf("no more records")
-		}
-
-		li.currentBlock = file.NewBlockID(li.currentBlock.FileName(), li.currentBlock.Number()-1)
-		if err := li.fm.Read(li.currentBlock, li.page); err != nil {
-			return nil, fmt.Errorf("error reading previous block: %w", err)
-		}
-
-		li.boundary = int(li.page.GetInt(0))
-		li.currentPos = li.boundary
+	// If we've reached the end of the current block
+	if li.currentPos == li.fm.BlockSize() {
+		// Create a new BlockID for the previous block (moving backwards)
+		block := file.NewBlockID(li.currentBlock.FileName(), li.currentBlock.Number()-1)
+		// Move the iterator to the previous block and load its data
+		li.moveToBlock(block)
 	}
 
-	// Read the record
-	li.currentPos -= 4
-	recSize := int(li.page.GetInt(li.currentPos))
-	li.currentPos -= recSize
-	return li.page.GetBytes(li.currentPos), nil
+	// Get the record bytes at the current position in the page
+	rec := li.page.GetBytes(li.currentPos)
+	// Advance the position by 4 (integer size) plus the length of the record
+	// The 4 bytes represent the record length prefix
+	li.currentPos += 4 + len(rec)
+	// Return the record bytes and nil error
+	return rec, nil
 }
 
+// Moves the iterator to the specified block and initializes the reading position.
+// It reads the block contents into the page buffer and sets up boundary and current position
+// for reading records from the block.
 func (li *LogIterator) moveToBlock(block *file.BlockID) error {
+	// Read the contents of the specified block into the page buffer
 	if err := li.fm.Read(block, li.page); err != nil {
+		// If reading fails, return an error with block details and wrapped original error
 		return fmt.Errorf("error reading block %v: %w", block, err)
 	}
+
+	// Get the boundary value from the first integer (4 bytes) in the page
+	// This boundary marks the position where the last record ends
 	li.boundary = int(li.page.GetInt(0))
+
+	// Set the current position to the boundary
+	// This ensures we start reading from where the last record ends
 	li.currentPos = li.boundary
+
+	// Return nil to indicate successful block movement
 	return nil
 }
