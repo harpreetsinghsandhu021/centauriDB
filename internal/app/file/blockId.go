@@ -37,13 +37,13 @@ func (b *BlockID) Equals(other *BlockID) bool {
 }
 
 // Returns a string representation of the blockID
-func (b *BlockID) toString() string {
+func (b *BlockID) String() string {
 	return fmt.Sprintf("[file %s, block %d]", b.filename, b.blockNumber)
 }
 
 // Returns a hash code for the BlockID
 // This is used when BlockID is used as a key in maps
-func (b *BlockID) hashCode() int {
+func (b *BlockID) HashCode() int {
 	h := 0
 	for _, c := range b.filename {
 		h = 31*h + int(c)
