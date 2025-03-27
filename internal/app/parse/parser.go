@@ -3,6 +3,7 @@ package parse
 import (
 	"centauri/internal/app/query"
 	"centauri/internal/app/record"
+	"centauri/internal/app/types"
 )
 
 // Implements a recursive-descent parser for the SQL syntax.
@@ -37,13 +38,13 @@ func (p *Parser) Field() string {
 // Corresponds to grammar rule: <Constant> := StrTok | IntTok
 // Example: In "WHERE age = 20", "20" is an integer constant.
 // Example: In "WHERE name = 'John'", "John" is a string constant.
-func (p *Parser) Constant() *query.Constant {
+func (p *Parser) Constant() *types.Constant {
 	if p.lexer.MatchStringConstant() {
 		// If the next token is a string constant, consume and wrap it
-		return query.NewConstantString(p.lexer.EatStringConstant())
+		return types.NewConstantString(p.lexer.EatStringConstant())
 	} else {
 		// Otherwise, assume it's an Integer constant, consume and wrap it
-		return query.NewConstantInt(p.lexer.EatIntConstant())
+		return types.NewConstantInt(p.lexer.EatIntConstant())
 	}
 }
 
@@ -303,8 +304,8 @@ func (p *Parser) FieldList() []string {
 //   - Single integer: "(1)"
 //   - Multiple types: "(1, 'John', 25)"
 //   - With spaces: "( 1 , 'John' , 25 )"
-func (p *Parser) ConstList() []*query.Constant {
-	var constants []*query.Constant
+func (p *Parser) ConstList() []*types.Constant {
+	var constants []*types.Constant
 	constants = append(constants, p.Constant()) // Parse the first constant
 
 	if p.lexer.MatchDelim(',') {

@@ -1,7 +1,9 @@
 package query
 
 import (
+	"centauri/internal/app/interfaces"
 	"centauri/internal/app/record"
+	"centauri/internal/app/types"
 	"math"
 )
 
@@ -29,7 +31,7 @@ func NewTerm(lhs *Expression, rhs *Expression) *Term {
 //
 // Returns:
 //   - bool: true if the left and right expressions evaluate to equal values, false otherwise
-func (t *Term) IsSatisfied(s Scan) bool {
+func (t *Term) IsSatisfied(s interfaces.Scan) bool {
 	lhsVal := t.lhs.Evaluate(s)
 	rhsVal := t.rhs.Evaluate(s)
 	return rhsVal.Equals(lhsVal)
@@ -95,7 +97,7 @@ func (t *Term) ReductionFactor(p Plan) int {
 // Checks if the Term represents an equation between the specified field
 // and a constant value (e.g., fieldName = constant). It returns the Constant if such an
 // equation exists, or nil otherwise.
-func (t *Term) EquatesWithConstant(fldName string) *Constant {
+func (t *Term) EquatesWithConstant(fldName string) *types.Constant {
 	if t.lhs.IsFieldName() && t.lhs.AsFieldName() == fldName && !t.rhs.IsFieldName() {
 		return t.rhs.AsConstant()
 	} else if t.rhs.IsFieldName() && t.rhs.AsFieldName() == fldName && !t.lhs.IsFieldName() {

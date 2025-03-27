@@ -1,7 +1,9 @@
 package query
 
 import (
+	"centauri/internal/app/interfaces"
 	"centauri/internal/app/record"
+	"centauri/internal/app/types"
 	"strings"
 )
 
@@ -37,7 +39,7 @@ func (p *Predicate) ConjoinWith(pred *Predicate) {
 // Returns true if the predicate evaluates to true with respect to the specified scan.
 // The predicate is satisfied if all of its terms are satisfied.
 // An empty predicate (no terms) is always satisfied.
-func (p *Predicate) IsSatisfied(s Scan) bool {
+func (p *Predicate) IsSatisfied(s interfaces.Scan) bool {
 	for _, t := range p.terms {
 		if !t.IsSatisfied(s) {
 			return false
@@ -110,7 +112,7 @@ func (p *Predicate) JoinSubPred(schema1, schema2 *record.Schema) *Predicate {
 //
 // This is useful for query optimization, especially for index selection
 // where equality with a constant allows direct record lookup.
-func (p *Predicate) EquatesWithConstant(fldName string) *Constant {
+func (p *Predicate) EquatesWithConstant(fldName string) *types.Constant {
 	for _, t := range p.terms {
 		c := t.EquatesWithConstant(fldName)
 		if c != nil {

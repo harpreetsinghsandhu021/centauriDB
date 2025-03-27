@@ -1,14 +1,19 @@
 package query
 
+import (
+	"centauri/internal/app/interfaces"
+	"centauri/internal/app/types"
+)
+
 // Implements the Scan interface for the product of two scans.
 // It combines records from two input scans to produce their Cartesian product.
 // For each record in S1, it iterates through all records in s2.
 type ProductScan struct {
-	s1 Scan
-	s2 Scan
+	s1 interfaces.Scan
+	s2 interfaces.Scan
 }
 
-func NewProductScan(s1, s2 Scan) *ProductScan {
+func NewProductScan(s1, s2 interfaces.Scan) *ProductScan {
 	ps := &ProductScan{
 		s1: s1,
 		s2: s2,
@@ -61,7 +66,7 @@ func (ps *ProductScan) GetString(fieldName string) (string, error) {
 }
 
 // Returns a constant value from the current record.
-func (ps *ProductScan) GetVal(fieldName string) (Constant, error) {
+func (ps *ProductScan) GetVal(fieldName string) (types.Constant, error) {
 	if ps.s1.HasField(fieldName) {
 		return ps.s1.GetVal(fieldName)
 	}
