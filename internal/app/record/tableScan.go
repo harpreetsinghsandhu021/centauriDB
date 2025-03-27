@@ -2,13 +2,16 @@ package record
 
 import (
 	"centauri/internal/app/file"
+	"centauri/internal/app/interfaces"
 	"centauri/internal/app/tx"
+	"centauri/internal/app/types"
 )
 
 // Provides the abstraction for scanning and manipulating records in a table
 // It implements the UpdateScan interface which allows both reading and modifying records
 // The scanner maintains a current position in the table and provides methods to navigate through records
 type TableScan struct {
+	interfaces.UpdateScan
 	tx          *tx.Transaction
 	layout      *Layout
 	rp          *RecordPage
@@ -145,8 +148,8 @@ func (ts *TableScan) MoveToRID(rid any) {
 	ts.currentSlot = ts.GetRID().slot
 }
 
-func (ts *TableScan) GetRID() *RID {
-	return NewRID(ts.rp.Block().Number(), ts.currentSlot)
+func (ts *TableScan) GetRID() *types.RID {
+	return types.NewRID(ts.rp.Block().Number(), ts.currentSlot)
 }
 
 // Checks if the current block is the last block of the table

@@ -1,6 +1,8 @@
 package query
 
 import (
+	"centauri/internal/app/interfaces"
+	"centauri/internal/app/types"
 	"errors"
 )
 
@@ -10,11 +12,11 @@ var ErrFieldNotFound = errors.New("field not found")
 // It filters fields from an underlying scan based on a field list,
 // only allowing access to specified fields.
 type ProjectScan struct {
-	s         Scan
+	s         interfaces.Scan
 	fieldList []string
 }
 
-func NewProjectScan(s Scan, fieldList []string) *ProjectScan {
+func NewProjectScan(s interfaces.Scan, fieldList []string) *ProjectScan {
 	return &ProjectScan{
 		s:         s,
 		fieldList: fieldList,
@@ -46,9 +48,9 @@ func (ps *ProjectScan) GetString(fieldName string) (string, error) {
 	return ps.s.GetString(fieldName)
 }
 
-func (ps *ProjectScan) GetVal(fieldName string) (Constant, error) {
+func (ps *ProjectScan) GetVal(fieldName string) (types.Constant, error) {
 	if !ps.s.HasField(fieldName) {
-		return Constant{}, ErrFieldNotFound
+		return types.Constant{}, ErrFieldNotFound
 	}
 
 	return ps.s.GetVal(fieldName)

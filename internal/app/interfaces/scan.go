@@ -1,4 +1,6 @@
-package query
+package interfaces
+
+import "centauri/internal/app/types"
 
 // Scan defines the interface that will be implemented by each query scan.
 // Each relational algebra operator(selection, projection, join, etc.) has its
@@ -33,7 +35,7 @@ type Scan interface {
 
 	// Returns the value of the specified field as a constant.
 	// This method provides a type-independent way to access field values.
-	GetVal(fieldName string) (Constant, error)
+	GetVal(fieldName string) (types.Constant, error)
 
 	// Checks if the scan contains the specified field
 	HasField(fieldName string) bool

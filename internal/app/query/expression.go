@@ -1,18 +1,20 @@
 package query
 
 import (
+	"centauri/internal/app/interfaces"
 	"centauri/internal/app/record"
+	"centauri/internal/app/types"
 )
 
 // Represents a generic expression that can be either a constant value or a field reference.
 // It consists of either a value stored as a Constant, or a field name as a string.
 // Only one of val or fldName will be non-zero at any time.
 type Expression struct {
-	val     *Constant
+	val     *types.Constant
 	fldName string
 }
 
-func NewExpressionVal(val *Constant) *Expression {
+func NewExpressionVal(val *types.Constant) *Expression {
 	return &Expression{
 		val: val,
 	}
@@ -28,7 +30,7 @@ func (e *Expression) IsFieldName() bool {
 	return e.fldName != ""
 }
 
-func (e *Expression) AsConstant() *Constant {
+func (e *Expression) AsConstant() *types.Constant {
 	return e.val
 }
 
@@ -40,7 +42,7 @@ func (e *Expression) AsFieldName() string {
 // If the expression has a predefined value (e.val), it returns that value.
 // Otherwise, it retrieves the value associated with the field name (e.fldName)
 // from the provided Scan interface.
-func (e *Expression) Evaluate(s Scan) *Constant {
+func (e *Expression) Evaluate(s interfaces.Scan) *types.Constant {
 	if e.val != nil {
 		return e.val
 	}

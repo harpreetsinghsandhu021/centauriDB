@@ -1,7 +1,7 @@
-package query
+package interfaces
 
 import (
-	"centauri/internal/app/record"
+	"centauri/internal/app/types"
 	"go/constant"
 )
 
@@ -35,8 +35,8 @@ type UpdateScan interface {
 	Delete() error
 
 	// Returns the Record ID of the current record
-	GetRID() (*record.RID, error)
+	GetRID() (*types.RID, error)
 
 	// Positions the scan to the record with the specified RID.
-	MoveToRID(rid *record.RID) error
+	MoveToRID(rid *types.RID) error
 }

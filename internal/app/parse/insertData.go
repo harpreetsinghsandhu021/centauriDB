@@ -1,16 +1,16 @@
 package parse
 
 import (
-	"centauri/internal/app/query"
+	"centauri/internal/app/types"
 )
 
 type InsertData struct {
 	tableName string
 	fields    []string
-	values    []*query.Constant
+	values    []*types.Constant
 }
 
-func NewInsertData(tableName string, fields []string, values []*query.Constant) *InsertData {
+func NewInsertData(tableName string, fields []string, values []*types.Constant) *InsertData {
 	return &InsertData{
 		tableName: tableName,
 		fields:    fields,
@@ -26,6 +26,6 @@ func (id *InsertData) Fields() []string {
 	return id.fields
 }
 
-func (id *InsertData) Values() []*query.Constant {
+func (id *InsertData) Values() []*types.Constant {
 	return id.values
 }
