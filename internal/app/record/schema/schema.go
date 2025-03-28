@@ -1,4 +1,4 @@
-package record
+package schema
 
 // The record schema of a table.
 // A schema contains the name and type of
@@ -100,4 +100,8 @@ func (s *Schema) Length(fieldname string) int {
 	}
 
 	return info.length
+}
+
+func (s *Schema) ToFieldType(value int) FieldType {
+	return FieldType(value)
 }

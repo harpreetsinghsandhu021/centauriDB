@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/tx"
 )
 
@@ -29,7 +30,7 @@ func NewMetaDataManager(isNew bool, tx *tx.Transaction) *MetaDataManager {
 	}
 }
 
-func (mm *MetaDataManager) CreateTable(tableName string, schema *record.Schema, tx *tx.Transaction) {
+func (mm *MetaDataManager) CreateTable(tableName string, schema *schema.Schema, tx *tx.Transaction) {
 	mm.tm.CreateTable(tableName, schema, tx)
 }
 

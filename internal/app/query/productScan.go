@@ -48,7 +48,7 @@ func (ps *ProductScan) Next() bool {
 }
 
 // Returns an integer value from the current record.
-func (ps *ProductScan) GetInt(fieldName string) (int, error) {
+func (ps *ProductScan) GetInt(fieldName string) int {
 	if ps.s1.HasField(fieldName) {
 		return ps.s1.GetInt(fieldName)
 	}
@@ -57,7 +57,7 @@ func (ps *ProductScan) GetInt(fieldName string) (int, error) {
 }
 
 // Returns a string value from the current record.
-func (ps *ProductScan) GetString(fieldName string) (string, error) {
+func (ps *ProductScan) GetString(fieldName string) string {
 	if ps.s1.HasField(fieldName) {
 		return ps.s1.GetString(fieldName)
 	}
@@ -66,7 +66,7 @@ func (ps *ProductScan) GetString(fieldName string) (string, error) {
 }
 
 // Returns a constant value from the current record.
-func (ps *ProductScan) GetVal(fieldName string) (types.Constant, error) {
+func (ps *ProductScan) GetVal(fieldName string) *types.Constant {
 	if ps.s1.HasField(fieldName) {
 		return ps.s1.GetVal(fieldName)
 	}

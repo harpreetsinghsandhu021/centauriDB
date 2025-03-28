@@ -2,6 +2,7 @@ package record
 
 import (
 	"centauri/internal/app/file"
+	sch "centauri/internal/app/record/schema"
 	"centauri/internal/app/tx"
 )
 
@@ -72,7 +73,7 @@ func (rp *RecordPage) format() {
 		schema := rp.layout.Schema()
 		for _, fieldname := range schema.Fields() {
 			fieldPos := rp.offset(slot) + rp.layout.Offset(fieldname)
-			if schema.DataType(fieldname) == INTEGER {
+			if schema.DataType(fieldname) == sch.INTEGER {
 				rp.tx.SetInt(*rp.block, fieldPos, 0, false)
 			} else {
 				rp.tx.SetString(*rp.block, fieldPos, "", false)

@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/tx"
 )
 
@@ -20,7 +21,7 @@ func NewViewManager(isNew bool, tableMgr *TableManager, tx *tx.Transaction) *Vie
 	}
 
 	if isNew {
-		schema := record.NewSchema()
+		schema := schema.NewSchema()
 		schema.AddStringField("viewname", MAX_NAME)
 		schema.AddStringField("viewdef", MAX_VIEWDEF)
 		tableMgr.CreateTable("viewcat", schema, tx)

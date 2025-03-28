@@ -28,14 +28,14 @@ type Scan interface {
 	Next() bool
 
 	// Returns the value of the specified integer field in the current record.
-	GetInt(fieldName string) (int, error)
+	GetInt(fieldName string) int
 
 	// Returns the value of the specified string field in the current record.
-	GetString(fieldName string) (string, error)
+	GetString(fieldName string) string
 
 	// Returns the value of the specified field as a constant.
 	// This method provides a type-independent way to access field values.
-	GetVal(fieldName string) (types.Constant, error)
+	GetVal(fieldName string) *types.Constant
 
 	// Checks if the scan contains the specified field
 	HasField(fieldName string) bool

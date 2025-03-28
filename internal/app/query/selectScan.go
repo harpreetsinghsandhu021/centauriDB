@@ -10,14 +10,14 @@ import (
 // Implements the updateScan interface for selections.
 // It filters records from an underlying scan based on a predicate.
 // The scan provides both read and update operations on the filtered records.
-type SelectSpan struct {
+type SelectScan struct {
 	interfaces.UpdateScan
 	s    interfaces.Scan // The underlying scan
 	pred *Predicate      // The selection predicate
 }
 
-func NewSelectSpan(s interfaces.Scan, pred *Predicate) *SelectSpan {
-	return &SelectSpan{
+func NewSelectScan(s interfaces.Scan, pred *Predicate) *SelectScan {
+	return &SelectScan{
 		s:    s,
 		pred: pred,
 	}
@@ -26,12 +26,12 @@ func NewSelectSpan(s interfaces.Scan, pred *Predicate) *SelectSpan {
 // Scan Interface implementation methods
 
 // Positions the scn before the first record.
-func (ss *SelectSpan) BeforeFirst() {
+func (ss *SelectScan) BeforeFirst() {
 	ss.s.BeforeFirst()
 }
 
 // Advances to the next record satisfying the predicate.
-func (ss *SelectSpan) Next() bool {
+func (ss *SelectScan) Next() bool {
 	for ss.s.Next() {
 		if ss.pred.IsSatisfied(ss.s) {
 			return true
@@ -41,23 +41,23 @@ func (ss *SelectSpan) Next() bool {
 }
 
 // Returns an integer value from the current record.
-func (ss *SelectSpan) GetInt(fieldName string) (int, error) {
+func (ss *SelectScan) GetInt(fieldName string) int {
 	return ss.s.GetInt(fieldName)
 }
 
-func (ss *SelectSpan) GetString(fieldName string) (string, error) {
+func (ss *SelectScan) GetString(fieldName string) string {
 	return ss.s.GetString(fieldName)
 }
 
-func (ss *SelectSpan) GetVal(fieldName string) (types.Constant, error) {
+func (ss *SelectScan) GetVal(fieldName string) *types.Constant {
 	return ss.s.GetVal(fieldName)
 }
 
-func (ss *SelectSpan) HasField(fieldName string) bool {
+func (ss *SelectScan) HasField(fieldName string) bool {
 	return ss.s.HasField(fieldName)
 }
 
-func (ss *SelectSpan) Close() {
+func (ss *SelectScan) Close() {
 	ss.s.Close()
 }
 
@@ -66,7 +66,7 @@ func (ss *SelectSpan) Close() {
 // Modifies an integer field in the current record.
 // It first attempts to cast the underlying scan to an UpdateScan.
 // Throws errors if underlying scan does`nt support updates or field modification fails
-func (ss *SelectSpan) SetInt(fieldName string, val int) error {
+func (ss *SelectScan) SetInt(fieldName string, val int) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
@@ -79,7 +79,7 @@ func (ss *SelectSpan) SetInt(fieldName string, val int) error {
 // Modifies an string field in the current record.
 // It first attempts to cast the underlying scan to an UpdateScan.
 // Throws errors if underlying scan does`nt support updates or field modification fails
-func (ss *SelectSpan) SetString(fieldName string, val string) error {
+func (ss *SelectScan) SetString(fieldName string, val string) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
@@ -91,7 +91,7 @@ func (ss *SelectSpan) SetString(fieldName string, val string) error {
 
 // Modifies a field in the current record using a constant value.
 // This method provides type-independent value modification.
-func (ss *SelectSpan) SetVal(fieldName string, val constant.Value) error {
+func (ss *SelectScan) SetVal(fieldName string, val constant.Value) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
@@ -103,7 +103,7 @@ func (ss *SelectSpan) SetVal(fieldName string, val constant.Value) error {
 
 // Removes the current record from the underlying scan.
 // Throws error if underlying scan does`nt support updates or deletion fails
-func (ss *SelectSpan) Delete() error {
+func (ss *SelectScan) Delete() error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
@@ -115,7 +115,7 @@ func (ss *SelectSpan) Delete() error {
 
 // Creates a new record in the underlying scan.
 // The new record must satisfy the selection predicate to be visible.
-func (ss *SelectSpan) Insert() error {
+func (ss *SelectScan) Insert() error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
@@ -125,7 +125,7 @@ func (ss *SelectSpan) Insert() error {
 	return updateScan.Insert()
 }
 
-func (ss *SelectSpan) GetRID() (*types.RID, error) {
+func (ss *SelectScan) GetRID() (*types.RID, error) {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 	if !ok {
 		return nil, errors.New("Not updatable")
@@ -136,7 +136,7 @@ func (ss *SelectSpan) GetRID() (*types.RID, error) {
 
 // Positions the scan at the specified record.
 // The record must satisfy the selection predicate to be accessible.
-func (ss *SelectSpan) MoveToRID(rid *types.RID) error {
+func (ss *SelectScan) MoveToRID(rid *types.RID) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 	if !ok {
 		return errors.New("Not updatable")
