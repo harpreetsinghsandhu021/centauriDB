@@ -145,7 +145,7 @@ func (ts *TableScan) MoveToRID(rid any) {
 	block := file.NewBlockID(ts.filename, ts.GetRID().BlockNumber()) // Loads the specified block into memory
 	ts.rp = NewRecordPage(ts.tx, block, ts.layout)
 	// Positions at the exact slot within the block
-	ts.currentSlot = ts.GetRID().slot
+	ts.currentSlot = ts.GetRID().Slot()
 }
 
 func (ts *TableScan) GetRID() *types.RID {

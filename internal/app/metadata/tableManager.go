@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/tx"
 )
 
@@ -20,14 +21,14 @@ type TableManager struct {
 func NewTableManager(isNew bool, tx *tx.Transaction) *TableManager {
 	// Define schema for the table catalog(tblcat)
 	// This catalog stores information about all the tables in the database
-	tcatSchema := record.NewSchema()
+	tcatSchema := schema.NewSchema()
 	tcatSchema.AddStringField("tblname", MAX_NAME) // table name
 	tcatSchema.AddIntField("slotsize")             // size of each record slot in the table
 	tcatLayout := record.NewLayout(tcatSchema)     // create layout from schema
 
 	// Define schema for the field catalog (fldcat)
 	// This catalog stores information about all the fields in all tables
-	fcatSchema := record.NewSchema()
+	fcatSchema := schema.NewSchema()
 	fcatSchema.AddStringField("tblname", MAX_NAME) // table name, this field belongs to
 	fcatSchema.AddStringField("fldname", MAX_NAME) // field name
 	fcatSchema.AddIntField("type")
@@ -49,7 +50,7 @@ func NewTableManager(isNew bool, tx *tx.Transaction) *TableManager {
 }
 
 // Creates a new table in the database and registers it in the catalogs
-func (tm *TableManager) CreateTable(tablename string, schema *record.Schema, tx *tx.Transaction) {
+func (tm *TableManager) CreateTable(tablename string, schema *schema.Schema, tx *tx.Transaction) {
 	// Create a layout for the new table based on its schema
 	layout := record.NewLayout(schema)
 
@@ -103,7 +104,7 @@ func (tm *TableManager) GetLayout(tablename string, tx *tx.Transaction) *record.
 	tcat.Close()
 
 	// Create a new schema object to hold field definitions
-	schema := record.NewSchema()
+	schema := schema.NewSchema()
 	// Create a map to store field offsets
 	offsets := make(map[string]int)
 
@@ -124,7 +125,7 @@ func (tm *TableManager) GetLayout(tablename string, tx *tx.Transaction) *record.
 			offsets[fieldname] = offset
 
 			// Add the field to our schema with its type and length
-			schema.AddField(fieldname, record.FieldType(fieldType), fieldLen)
+			schema.AddField(fieldname, schema.ToFieldType(fieldType), fieldLen)
 		}
 	}
 

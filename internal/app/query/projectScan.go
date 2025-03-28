@@ -33,24 +33,24 @@ func (ps *ProjectScan) Next() bool {
 	return ps.s.Next()
 }
 
-func (ps *ProjectScan) GetInt(fieldName string) (int, error) {
+func (ps *ProjectScan) GetInt(fieldName string) int {
 	if !ps.s.HasField(fieldName) {
-		return 0, ErrFieldNotFound
+		return 0
 	}
 	return ps.s.GetInt(fieldName)
 }
 
-func (ps *ProjectScan) GetString(fieldName string) (string, error) {
+func (ps *ProjectScan) GetString(fieldName string) string {
 	if !ps.s.HasField(fieldName) {
-		return "", ErrFieldNotFound
+		return ""
 	}
 
 	return ps.s.GetString(fieldName)
 }
 
-func (ps *ProjectScan) GetVal(fieldName string) (types.Constant, error) {
+func (ps *ProjectScan) GetVal(fieldName string) *types.Constant {
 	if !ps.s.HasField(fieldName) {
-		return types.Constant{}, ErrFieldNotFound
+		return &types.Constant{}
 	}
 
 	return ps.s.GetVal(fieldName)

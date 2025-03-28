@@ -2,7 +2,7 @@ package query
 
 import (
 	"centauri/internal/app/interfaces"
-	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/types"
 	"math"
 )
@@ -40,7 +40,7 @@ func (t *Term) IsSatisfied(s interfaces.Scan) bool {
 // Checks if both the left-hand side (lhs) and right-hand side (rhs) of the term
 // are applicable to the given schema. This method is used to validate if the term's operands
 // are compatible with the schema structure.
-func (t *Term) AppliesTo(schema *record.Schema) bool {
+func (t *Term) AppliesTo(schema *schema.Schema) bool {
 	return t.lhs.AppliesTo(schema) && t.rhs.AppliesTo(schema)
 }
 
@@ -54,7 +54,7 @@ func (t *Term) AppliesTo(schema *record.Schema) bool {
 //   - For field-to-constant comparisions: distinct value count of the field
 //   - For equal constants: 1 (maximum reduction)
 //   - For non-equal constants: math.MaxInt (no reduction)
-func (t *Term) ReductionFactor(p Plan) int {
+func (t *Term) ReductionFactor(p interfaces.Plan) int {
 	var lhsName string
 	var rhsName string
 
@@ -66,21 +66,21 @@ func (t *Term) ReductionFactor(p Plan) int {
 		// Return the maximum number of distinct values between between the two fields
 		// This is a heuristic that assumes the more distinct values a field has,
 		// the less selective (higher reduction factor) the condition will be
-		return max(p.distinctValues(lhsName), p.distinctValues(rhsName))
+		return max(p.DistinctValues(lhsName), p.DistinctValues(rhsName))
 	}
 
 	// CASE 2: Only the left-hand side is a field name
 	if t.lhs.IsFieldName() {
 		lhsName = t.lhs.AsFieldName()
 		// Return the distinct value count for this field
-		return p.distinctValues(lhsName)
+		return p.DistinctValues(lhsName)
 	}
 
 	// CASE 3: Only the right-hand side is a field name
 	if t.rhs.IsFieldName() {
 		rhsName = t.rhs.AsFieldName()
 		// Return the distinct value count for this field
-		return p.distinctValues(rhsName)
+		return p.DistinctValues(rhsName)
 	}
 
 	// CASE 4: Both sides are constants and they are equal

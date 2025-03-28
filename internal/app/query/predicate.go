@@ -2,7 +2,7 @@ package query
 
 import (
 	"centauri/internal/app/interfaces"
-	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/types"
 	"strings"
 )
@@ -53,7 +53,7 @@ func (p *Predicate) IsSatisfied(s interfaces.Scan) bool {
 //
 // The reduction factor of the entire predicate is the product of the reduction factors of its individual terms, as each
 // term further filters the result set.
-func (p *Predicate) ReductionFactor(plan Plan) int {
+func (p *Predicate) ReductionFactor(plan interfaces.Plan) int {
 	factor := 1
 
 	for _, t := range p.terms {
@@ -65,7 +65,7 @@ func (p *Predicate) ReductionFactor(plan Plan) int {
 
 // Returns a new predicate contanining only the terms that can be evaluated using the specified schema.
 // A term can be evaluated if all fields it references are in the schema.
-func (p *Predicate) SelectSubPred(schema *record.Schema) *Predicate {
+func (p *Predicate) SelectSubPred(schema *schema.Schema) *Predicate {
 	result := NewPredicate()
 
 	for _, t := range p.terms {
@@ -88,9 +88,9 @@ func (p *Predicate) SelectSubPred(schema *record.Schema) *Predicate {
 // 1. Cannot be evaluated with only the first schema.
 // 2. Cannot be evaluated with only the second schema.
 // 3. Can be evaluated with the combined schemas.
-func (p *Predicate) JoinSubPred(schema1, schema2 *record.Schema) *Predicate {
+func (p *Predicate) JoinSubPred(schema1, schema2 *schema.Schema) *Predicate {
 	result := NewPredicate()
-	newSchema := record.NewSchema()
+	newSchema := schema.NewSchema()
 	newSchema.AddAll(schema1)
 	newSchema.AddAll(schema2)
 

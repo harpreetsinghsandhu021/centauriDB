@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"centauri/internal/app/record"
+	sch "centauri/internal/app/record/schema"
 	"centauri/internal/app/tx"
 )
 
@@ -12,14 +13,14 @@ type IndexInfo struct {
 	idxName     string
 	fldName     string
 	tx          *tx.Transaction
-	tableSchema *record.Schema
+	tableSchema *sch.Schema
 	idxLayout   *record.Layout
 	si          *StatInfo
 }
 
 func NewIndexInfo(idxName string,
 	fldName string,
-	tableSchema *record.Schema,
+	tableSchema *sch.Schema,
 	tx *tx.Transaction,
 	si *StatInfo) *IndexInfo {
 	return &IndexInfo{
@@ -92,13 +93,13 @@ func (ii *IndexInfo) DistinctValues(fname string) int {
 // Creates the physical layout for the index records.
 func (ii *IndexInfo) createIdxLayout() *record.Layout {
 	// Create new schema for index records
-	schema := record.NewSchema()
+	schema := sch.NewSchema()
 	// Add fields for record location
 	schema.AddIntField("block") // Block number of the record
 	schema.AddIntField("id")    // Record ID within the block
 
 	// Add field for indexed value based on its type
-	if ii.tableSchema.DataType(ii.fldName) == record.INTEGER {
+	if ii.tableSchema.DataType(ii.fldName) == sch.INTEGER {
 		schema.AddIntField("dataval") // For integer values
 	} else {
 		// For string values, use the same length as original field

@@ -2,12 +2,13 @@ package record
 
 import (
 	"centauri/internal/app/file"
+	"centauri/internal/app/record/schema"
 	"unsafe"
 )
 
 // Represents the physical layout of records according to a schema.
 type Layout struct {
-	schema   *Schema
+	schema   *schema.Schema
 	offsets  map[string]int
 	slotSize int
 }
@@ -15,7 +16,7 @@ type Layout struct {
 // Creates a layout object from the schema.
 // This function is used when a table is created.
 // It determines the physical offset of each field within the record.
-func NewLayout(schema *Schema) *Layout {
+func NewLayout(schema *schema.Schema) *Layout {
 	offsets := make(map[string]int)
 
 	// Leave Space for the empty/in-use flag
@@ -35,7 +36,7 @@ func NewLayout(schema *Schema) *Layout {
 
 // Creates a layout object from the specified metadata.
 // This function is used when the metadata is retrieved from the catalog.
-func NewLayoutWithOffsets(schema *Schema, offsets map[string]int, slotSize int) *Layout {
+func NewLayoutWithOffsets(schema *schema.Schema, offsets map[string]int, slotSize int) *Layout {
 	return &Layout{
 		schema:   schema,
 		offsets:  offsets,
@@ -43,7 +44,7 @@ func NewLayoutWithOffsets(schema *Schema, offsets map[string]int, slotSize int) 
 	}
 }
 
-func (l *Layout) Schema() *Schema {
+func (l *Layout) Schema() *schema.Schema {
 	return l.schema
 }
 
@@ -63,12 +64,12 @@ func (l *Layout) SlotSize() int {
 }
 
 // Returns the number of bytes required to store the specified field
-func lengthInBytes(schema *Schema, fieldname string) int {
-	fieldType := schema.DataType(fieldname)
+func lengthInBytes(sch *schema.Schema, fieldname string) int {
+	fieldType := sch.DataType(fieldname)
 
-	if fieldType == INTEGER {
+	if fieldType == schema.INTEGER {
 		return int(unsafe.Sizeof(int(0)))
 	} else {
-		return file.MaxLength(schema.Length(fieldname))
+		return file.MaxLength(sch.Length(fieldname))
 	}
 }

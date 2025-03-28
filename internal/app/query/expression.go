@@ -2,7 +2,7 @@ package query
 
 import (
 	"centauri/internal/app/interfaces"
-	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/types"
 )
 
@@ -47,8 +47,7 @@ func (e *Expression) Evaluate(s interfaces.Scan) *types.Constant {
 		return e.val
 	}
 
-	val, _ := s.GetVal(e.fldName)
-	return &val
+	return s.GetVal(e.fldName)
 }
 
 // AppliesTo checks if the expression is applicable to the given schema.
@@ -59,7 +58,7 @@ func (e *Expression) Evaluate(s interfaces.Scan) *types.Constant {
 //
 // Returns:
 //   - bool: true if the expression applies to the schema, false otherwise
-func (e *Expression) AppliesTo(schema *record.Schema) bool {
+func (e *Expression) AppliesTo(schema *schema.Schema) bool {
 	if e.val != nil {
 		return true
 	}

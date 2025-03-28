@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/tx"
 )
 
@@ -22,7 +23,7 @@ type IndexManager struct {
 // For existing databases, it loads the existing catalog.
 func NewIndexManager(isNew bool, tm *TableManager, sm *StatManager, tx *tx.Transaction) *IndexManager {
 	if isNew {
-		schema := record.NewSchema()
+		schema := schema.NewSchema()
 		schema.AddStringField("indexname", MAX_NAME)
 		schema.AddStringField("tablename", MAX_NAME)
 		schema.AddStringField("fieldname", MAX_NAME)

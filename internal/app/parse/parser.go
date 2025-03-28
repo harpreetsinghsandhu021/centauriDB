@@ -2,7 +2,7 @@ package parse
 
 import (
 	"centauri/internal/app/query"
-	"centauri/internal/app/record"
+	"centauri/internal/app/record/schema"
 	"centauri/internal/app/types"
 )
 
@@ -366,7 +366,7 @@ func (p *Parser) CreateTable() *CreateTableData {
 // Returns a Schema struct contaning all field definitions.
 // Corresponds to grammar rule: <FieldDefs> := <FieldDef> [ , <FieldDefs> ]
 // Used to define multiple fields in a CREATE TABLE statement.
-func (p *Parser) FieldDefs() *record.Schema {
+func (p *Parser) FieldDefs() *schema.Schema {
 	schema := p.FieldDef() // Parse the first field definition
 
 	if p.lexer.MatchDelim(',') {
@@ -384,7 +384,7 @@ func (p *Parser) FieldDefs() *record.Schema {
 // Parses a single field definition.
 // Returns a Schema struct contanining a single field definition.
 // Used to define one field with its name and type.
-func (p *Parser) FieldDef() *record.Schema {
+func (p *Parser) FieldDef() *schema.Schema {
 	fieldName := p.Field() // Parse the field name
 	// Continue parsing to get the field's type information
 	return p.FieldType(fieldName)
@@ -394,8 +394,8 @@ func (p *Parser) FieldDef() *record.Schema {
 // Returns a Schema struct containing the field with its type.
 // Corresponds to grammar rule: <TypeDef> := INT | VARCHAR (IntTok)
 // Used to define the data type of a field in a CREATE TABLE statement.
-func (p *Parser) FieldType(fieldName string) *record.Schema {
-	schema := record.NewSchema() // Create a new schema to hold this field definition
+func (p *Parser) FieldType(fieldName string) *schema.Schema {
+	schema := schema.NewSchema() // Create a new schema to hold this field definition
 
 	if p.lexer.MatchKeyword("int") {
 		// If the type is INT, add an integer field to the schema
