@@ -2,7 +2,6 @@ package interfaces
 
 import (
 	"centauri/internal/app/types"
-	"go/constant"
 )
 
 // Extends the scan interface to provide modification operations
@@ -19,7 +18,7 @@ type UpdateScan interface {
 
 	// Modifies the specified field in the current record
 	// using a type-independent constant value.
-	SetVal(fieldName string, val constant.Value) error
+	SetVal(fieldName string, val *types.Constant) error
 
 	// Modifies the specified integer field in the current record.
 	SetInt(fieldName string, val int) error

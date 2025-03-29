@@ -15,3 +15,11 @@ func NewDeleteData(tableName string, pred *query.Predicate) *DeleteData {
 		pred:      pred,
 	}
 }
+
+func (dd *DeleteData) TableName() string {
+	return dd.tableName
+}
+
+func (dd *DeleteData) Pred() *query.Predicate {
+	return dd.pred
+}
