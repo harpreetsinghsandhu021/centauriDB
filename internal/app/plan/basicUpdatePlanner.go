@@ -11,6 +11,7 @@ import (
 // and DDL operations like create table, view and index. It uses MetadDataManager
 // to handle table metadata operations.
 type BasicUpdatePlanner struct {
+	UpdatePlanner
 	mdm *metadata.MetaDataManager
 }
 

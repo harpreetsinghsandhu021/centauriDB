@@ -11,5 +11,5 @@ import (
 // execution plan considering the current transaction context.
 type QueryPlanner interface {
 	// Generates a Plan object from the parsed query data and transaction context
-	CreatePlan(data parse.QueryData, tx *tx.Transaction) interfaces.Plan
+	CreatePlan(data *parse.QueryData, tx *tx.Transaction) interfaces.Plan
 }
