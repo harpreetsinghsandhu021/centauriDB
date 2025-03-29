@@ -120,3 +120,10 @@ func (t *Term) EquatesWithField(fldName string) string {
 func (t *Term) String() string {
 	return t.lhs.String() + "=" + t.rhs.String()
 }
+
+func (t *Term) LHS() *Expression {
+	return t.lhs
+}
+func (t *Term) RHS() *Expression {
+	return t.rhs
+}

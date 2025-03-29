@@ -28,13 +28,13 @@ func NewConstantString(sVal string) *Constant {
 }
 
 // Returns the integer value
-func (c *Constant) AsInt() int {
-	return *c.iVal
+func (c *Constant) AsInt() *int {
+	return c.iVal
 }
 
 // Returns the string value
-func (c *Constant) AsString() string {
-	return *c.sVal
+func (c *Constant) AsString() *string {
+	return c.sVal
 }
 
 // Compares this Constant with another value.

@@ -157,3 +157,7 @@ func (p *Predicate) String() string {
 	return result.String()
 
 }
+
+func (p *Predicate) Terms() []Term {
+	return p.terms
+}
