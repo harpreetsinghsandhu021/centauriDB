@@ -33,7 +33,7 @@ func (p *Planner) CreateQueryPlan(cmd string, tx *tx.Transaction) interfaces.Pla
 	data := parser.Query()
 	p.verifyQuery(data)
 
-	return p.qPlanner.CreatePlan(*data, tx)
+	return p.qPlanner.CreatePlan(data, tx)
 }
 
 // Process various types of update commands.

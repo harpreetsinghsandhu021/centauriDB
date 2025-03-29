@@ -69,9 +69,10 @@ func (tx *Transaction) Rollback() {
 // to disk via the buffer manager and then executing recovery procedures through the
 // recovery manager. This method is typically called after a system crash or failure
 // to restore the transaction to a consistent state.
-func (tx *Transaction) Recover() {
+func (tx *Transaction) Recover() error {
 	tx.bm.FlushAll(int(tx.txnum))
 	tx.rm.Recover()
+	return nil
 }
 
 // Pins a block to prevent it from being discarded
