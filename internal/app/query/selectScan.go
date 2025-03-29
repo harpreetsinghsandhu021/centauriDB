@@ -4,7 +4,6 @@ import (
 	"centauri/internal/app/interfaces"
 	"centauri/internal/app/types"
 	"errors"
-	"go/constant"
 )
 
 // Implements the updateScan interface for selections.
@@ -70,7 +69,7 @@ func (ss *SelectScan) SetInt(fieldName string, val int) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
-		return errors.New("Not updatable")
+		return errors.New("not updatable")
 	}
 
 	return updateScan.SetInt(fieldName, val)
@@ -83,7 +82,7 @@ func (ss *SelectScan) SetString(fieldName string, val string) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
-		return errors.New("Not updatable")
+		return errors.New("not updatable")
 	}
 
 	return updateScan.SetString(fieldName, val)
@@ -91,11 +90,11 @@ func (ss *SelectScan) SetString(fieldName string, val string) error {
 
 // Modifies a field in the current record using a constant value.
 // This method provides type-independent value modification.
-func (ss *SelectScan) SetVal(fieldName string, val constant.Value) error {
+func (ss *SelectScan) SetVal(fieldName string, val *types.Constant) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
-		return errors.New("Not updatable")
+		return errors.New("not updatable")
 	}
 
 	return updateScan.SetVal(fieldName, val)
@@ -107,7 +106,7 @@ func (ss *SelectScan) Delete() error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
-		return errors.New("Not updatable")
+		return errors.New("not updatable")
 	}
 
 	return updateScan.Delete()
@@ -119,7 +118,7 @@ func (ss *SelectScan) Insert() error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 
 	if !ok {
-		return errors.New("Not updatable")
+		return errors.New("not updatable")
 	}
 
 	return updateScan.Insert()
@@ -128,7 +127,7 @@ func (ss *SelectScan) Insert() error {
 func (ss *SelectScan) GetRID() (*types.RID, error) {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 	if !ok {
-		return nil, errors.New("Not updatable")
+		return nil, errors.New("not updatable")
 	}
 
 	return updateScan.GetRID()
@@ -139,7 +138,7 @@ func (ss *SelectScan) GetRID() (*types.RID, error) {
 func (ss *SelectScan) MoveToRID(rid *types.RID) error {
 	updateScan, ok := ss.s.(interfaces.UpdateScan)
 	if !ok {
-		return errors.New("Not updatable")
+		return errors.New("not updatable")
 	}
 
 	return updateScan.MoveToRID(rid)
