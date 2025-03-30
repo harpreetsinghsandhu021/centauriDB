@@ -9,5 +9,5 @@ type RemoteMetaData interface {
 	GetColumnCount(ctx context.Context) (int, error)
 	GetColumnName(ctx context.Context, column int) (string, error)
 	GetColumnType(ctx context.Context, column int) (int, error)
-	GetColumnDisplaySize(ctx context.Context, column int) error
+	GetColumnDisplaySize(ctx context.Context, column int) (int, error)
 }
