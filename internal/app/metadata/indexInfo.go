@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"centauri/internal/app/index/hash"
 	"centauri/internal/app/record"
 	sch "centauri/internal/app/record/schema"
 	"centauri/internal/app/tx"
@@ -18,27 +19,26 @@ type IndexInfo struct {
 	si          *StatInfo
 }
 
-func NewIndexInfo(idxName string,
-	fldName string,
-	tableSchema *sch.Schema,
-	tx *tx.Transaction,
-	si *StatInfo) *IndexInfo {
-	return &IndexInfo{
+func NewIndexInfo(idxName string, fldName string, tableSchema *sch.Schema, tx *tx.Transaction, si *StatInfo) *IndexInfo {
+
+	ii := &IndexInfo{
 		idxName:     idxName,
 		fldName:     fldName,
 		tx:          tx,
 		tableSchema: tableSchema,
-		idxLayout:   createIdxLayout(),
 		si:          si,
 	}
 
+	ii.idxLayout = ii.createIdxLayout()
+
+	return ii
 }
 
 // Open creates and returns a new HashIndex instance for this index.
 // It initializes the index using the transaction, index name and layout
 // stored in the IndexInfo struct.
-func (ii *IndexInfo) Open() {
-	return NewHashIndex(ii.tx, ii.idxName, ii.idxLayout)
+func (ii *IndexInfo) Open() interface{} {
+	return hash.NewHashIndex(ii.tx, ii.idxName, ii.idxLayout)
 }
 
 // Estimate the number of block accesses required to
@@ -54,7 +54,7 @@ func (ii *IndexInfo) Open() {
 //
 // Returns
 //   - int: Estimated number of block accesses needed
-func (ii *IndexInfo) BlocksAccessed() {
+func (ii *IndexInfo) BlocksAccessed() int {
 	// Calculate Records per Block (rpb)
 	// - BlockSize(): gets the size of a disk block in bytes
 	// - SlotSize(): gets the size of an index record in bytes
@@ -64,9 +64,9 @@ func (ii *IndexInfo) BlocksAccessed() {
 	// Calculate the number of blocks needed to store matching records
 	// - RecordsOutput(): gets the estimated number of matching records
 	// - Division by rpb gives us the number of blocks these records occupy
-	numBlocks = ii.si.RecordsOutput() / rpb
+	numBlocks := ii.si.RecordsOutput() / rpb
 
-	return searchCost(numBlocks, rpb)
+	return hash.SearchCost(numBlocks, rpb)
 }
 
 // Estimates the number of records that will be retrieved by a
