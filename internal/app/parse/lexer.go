@@ -21,7 +21,7 @@ func NewLexer(s string) *Lexer {
 	sc.Init(strings.NewReader(s))
 
 	// Configure scanner
-	sc.Mode = scanner.ScanIdents | scanner.ScanInts | scanner.ScanStrings
+	sc.Mode = scanner.ScanIdents | scanner.ScanInts | scanner.ScanStrings | scanner.ScanRawStrings
 
 	// Allow underscores in identifiers
 	// Make scanner case-sensitive for identifiers
@@ -81,12 +81,12 @@ func (l *Lexer) MatchIntConstant() bool {
 
 // Returns true if the current token is a string.
 func (l *Lexer) MatchStringConstant() bool {
-	return l.currentRune == scanner.String
+	return l.currentRune == scanner.String || l.currentRune == '\''
 }
 
 // Returns true if the current token is the specified keyword.
 func (l *Lexer) MatchKeyword(w string) bool {
-	return l.currentRune == scanner.Ident && strings.ToLower(l.scanner.TokenText()) == strings.ToLower(w)
+	return l.currentRune == scanner.Ident && strings.EqualFold(l.scanner.TokenText(), w)
 }
 
 // Returns true if the current token is a legal identifier.
@@ -130,10 +130,49 @@ func (l *Lexer) EatStringConstant() string {
 		panic("BadSyntaxException: Expected string constant")
 	}
 
+	// If we see a single quote, we need to handle a string literal
+	if l.currentRune == '\'' {
+		l.nextToken() // Consume the opening quote
+		var value strings.Builder
+		isFirstToken := true
+
+		// Keep reading until we find the closing quote
+		for l.currentRune != '\'' {
+			if l.currentRune == scanner.EOF {
+				panic("BadSyntaxException: Unclosed string literal")
+			}
+
+			currentText := l.scanner.TokenText()
+
+			// Handle hyphens
+			if l.currentRune == '-' {
+				value.WriteRune('-')
+				l.nextToken()
+				continue
+			}
+
+			// Add space between words, but not around hyphens
+			if !isFirstToken && l.currentRune != '-' && value.String() != "" && !strings.HasSuffix(value.String(), "-") {
+				value.WriteString(" ")
+			}
+
+			value.WriteString(currentText)
+			isFirstToken = false
+			l.nextToken()
+		}
+
+		result := value.String()
+		// Clean up any potential spacing isssues around hyphens
+		result = strings.ReplaceAll(result, " -", "-")
+		result = strings.ReplaceAll(result, "- ", "-")
+		l.nextToken()
+		return strings.TrimSpace(result)
+	}
+
 	// Get the string value and handle quotes
 	// The scanner includes the quotes, so we need to remove them
 	tokenText := l.scanner.TokenText()
-	value := tokenText[1 : len(tokenText)-1] // Remove surrounding quotes
+	value := strings.Trim(tokenText, `'"`) // Remove surrounding quotes
 
 	l.nextToken()
 	return value
@@ -166,5 +205,5 @@ func (l *Lexer) EatId() string {
 // The token text is stored in the lexer's currentText field.
 // Returns the scanned token as a rune.
 func (l *Lexer) nextToken() {
-	l.currentRune = l.scanner.Next()
+	l.currentRune = l.scanner.Scan()
 }
