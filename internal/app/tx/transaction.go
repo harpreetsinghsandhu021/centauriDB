@@ -34,7 +34,7 @@ func NewTransaction(fm *file.FileManager, lm *log.LogManager, bm *buffer.BufferM
 	}
 
 	tx.rm = tx.rm.NewRecoveryManager(tx, int(txNum), lm, bm)
-	tx.cm = NewConcurrencyManager(nil)
+	tx.cm = NewConcurrencyManager(NewLockTable())
 	tx.myBuffers = NewBufferList(bm)
 
 	return tx
