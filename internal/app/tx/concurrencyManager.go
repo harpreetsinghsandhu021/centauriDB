@@ -35,7 +35,7 @@ func (cm *ConcurrencyManager) SLock(block file.BlockID) error {
 	// Check if we already have any lock on this block
 	if _, exists := cm.locks[block]; !exists {
 		// Request shared lock from global lock table
-		if err := cm.locktable.SLock(block); err != nil {
+		if err := cm.locktable.SLock(&block); err != nil {
 			return err
 		}
 		// Record the lock in our local map
@@ -57,14 +57,14 @@ func (cm *ConcurrencyManager) XLock(block file.BlockID) error {
 	if !cm.hasXLock(block) {
 		// First get a shared lock if we dont have any
 		if _, exists := cm.locks[block]; !exists {
-			if err := cm.locktable.SLock(block); err != nil {
+			if err := cm.locktable.SLock(&block); err != nil {
 				return err
 			}
 			cm.locks[block] = shared
 		}
 
 		// Now upgrade to exclusive lock
-		if err := cm.locktable.XLock(block); err != nil {
+		if err := cm.locktable.XLock(&block); err != nil {
 			return err
 		}
 
@@ -82,7 +82,7 @@ func (cm *ConcurrencyManager) Release() {
 
 	// Release each lock in the global lock table
 	for block := range cm.locks {
-		cm.locktable.Unlock(block)
+		cm.locktable.Unlock(&block)
 	}
 
 	// Clear out our local lock tracking
@@ -92,9 +92,6 @@ func (cm *ConcurrencyManager) Release() {
 // Checks if the transaction currently holds an
 // exclusive lock on the specified lock.
 func (cm *ConcurrencyManager) hasXLock(block file.BlockID) bool {
-	cm.mu.RLock()
-	defer cm.mu.RUnlock()
-
 	lockType, exists := cm.locks[block]
 	return exists && lockType == exclusive
 }
