@@ -28,26 +28,26 @@ func TestSLock(t *testing.T) {
 	block := file.NewBlockID("test.db", 1)
 
 	t.Run("Basic SLock", func(t *testing.T) {
-		err := lt.SLock(*block)
+		err := lt.SLock(block)
 
 		if err != nil {
-			t.Errorf("Failed to acquite SLock: %v", err)
+			t.Errorf("Failed to acquire SLock: %v", err)
 		}
 
-		if lt.GetLockVal(*block) != 1 {
-			t.Errorf("Expected lock value 2, got %d", lt.GetLockVal(*block))
+		if lt.GetLockVal(block) != 1 {
+			t.Errorf("Expected lock value 2, got %d", lt.GetLockVal(block))
 		}
 
 	})
 
 	t.Run("Mutiple SLocks", func(t *testing.T) {
-		err := lt.SLock(*block)
+		err := lt.SLock(block)
 		if err != nil {
 			t.Errorf("Failed to acquire second SLock: %v", err)
 		}
 
-		if lt.GetLockVal(*block) != 2 {
-			t.Errorf("Expected lock value 2, got %d", lt.GetLockVal(*block))
+		if lt.GetLockVal(block) != 2 {
+			t.Errorf("Expected lock value 2, got %d", lt.GetLockVal(block))
 		}
 
 	})
@@ -56,14 +56,14 @@ func TestSLock(t *testing.T) {
 		block2 := file.NewBlockID("test.db", 2)
 
 		// First acquire an XLock
-		err := lt.XLock(*block2)
+		err := lt.XLock(block2)
 		if err != nil {
 			t.Errorf("Failed to acquire XLock: %v", err)
 		}
 
-		err = lt.SLock(*block2)
+		err = lt.SLock(block2)
 
-		if err != tx.ErrLockTimeout {
+		if err != tx.LockAbortError {
 			t.Errorf("Expected timeout error, got %v", err)
 		}
 	})
@@ -74,26 +74,26 @@ func TestXLock(t *testing.T) {
 	block := file.NewBlockID("test.db", 1)
 
 	t.Run("Basic XLock", func(t *testing.T) {
-		err := lt.XLock(*block)
+		err := lt.XLock(block)
 		if err != nil {
 			t.Errorf("Failed to acquire XLock: %v", err)
 		}
 
-		if lt.GetLockVal(*block) != -1 {
-			t.Errorf("Expected lock value -1, got %d", lt.GetLockVal(*block))
+		if lt.GetLockVal(block) != -1 {
+			t.Errorf("Expected lock value -1, got %d", lt.GetLockVal(block))
 		}
 	})
 
 	t.Run("XLock Timeout with SLock", func(t *testing.T) {
 		block2 := file.NewBlockID("test.db", 2)
-		err := lt.SLock(*block2)
+		err := lt.SLock(block2)
 		if err != nil {
 			t.Errorf("Failed to acquire SLock: %v", err)
 		}
 
-		err = lt.XLock(*block2)
+		err = lt.XLock(block2)
 
-		if err != tx.ErrLockTimeout {
+		if err != tx.LockAbortError {
 			t.Errorf("Expected timeout error, got %v", err)
 		}
 	})
@@ -104,47 +104,47 @@ func TestUnlock(t *testing.T) {
 	block := file.NewBlockID("test.db", 1)
 
 	t.Run("Unlock Single SLock", func(t *testing.T) {
-		err := lt.SLock(*block)
+		err := lt.SLock(block)
 
 		if err != nil {
 			t.Errorf("Failed to acquire SLock: %v", err)
 		}
 
-		lt.Unlock(*block)
+		lt.Unlock(block)
 
-		if lt.GetLockVal(*block) != 0 {
-			t.Errorf("Expected lock value 0 got %d", lt.GetLockVal(*block))
+		if lt.GetLockVal(block) != 0 {
+			t.Errorf("Expected lock value 0 got %d", lt.GetLockVal(block))
 		}
 	})
 
 	t.Run("Unlock Multiple SLocks", func(t *testing.T) {
-		err := lt.SLock(*block)
+		err := lt.SLock(block)
 
 		if err != nil {
 			t.Errorf("Failed to acquire first SLock: %v", err)
 		}
 
-		err = lt.SLock(*block)
+		err = lt.SLock(block)
 		if err != nil {
 			t.Errorf("Failed to acquire second SLock")
 		}
 
-		lt.Unlock(*block)
-		if lt.GetLockVal(*block) != 1 {
-			t.Errorf("Expected lock value 1, got %d", lt.GetLockVal(*block))
+		lt.Unlock(block)
+		if lt.GetLockVal(block) != 1 {
+			t.Errorf("Expected lock value 1, got %d", lt.GetLockVal(block))
 		}
 	})
 
 	t.Run("Unlock XLock", func(t *testing.T) {
 		block2 := file.NewBlockID("test.db", 2)
-		err := lt.XLock(*block2)
+		err := lt.XLock(block2)
 		if err != nil {
 			t.Errorf("Failed to acquire XLock: %v", err)
 		}
 
-		lt.Unlock(*block2)
-		if lt.GetLockVal(*block2) != 0 {
-			t.Errorf("Expectef lock value 0, got %d", lt.GetLockVal(*block2))
+		lt.Unlock(block2)
+		if lt.GetLockVal(block2) != 0 {
+			t.Errorf("Expectef lock value 0, got %d", lt.GetLockVal(block2))
 		}
 	})
 
@@ -163,7 +163,7 @@ func TestConcurrency(t *testing.T) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				err := lt.SLock(*block)
+				err := lt.SLock(block)
 				if err != nil {
 					t.Errorf("Failed to acquire concurrent SLock: %v", err)
 				}
@@ -172,8 +172,8 @@ func TestConcurrency(t *testing.T) {
 
 		wg.Wait()
 
-		if lt.GetLockVal(*block) != numGorRoutines {
-			t.Errorf("Expected %d Slocks, got %d", numGorRoutines, lt.GetLockVal(*block))
+		if lt.GetLockVal(block) != numGorRoutines {
+			t.Errorf("Expected %d Slocks, got %d", numGorRoutines, lt.GetLockVal(block))
 		}
 	})
 
@@ -185,18 +185,18 @@ func TestConcurrency(t *testing.T) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				lt.Unlock(*block)
+				lt.Unlock(block)
 			}()
 		}
 		wg.Wait()
 
-		if lt.GetLockVal(*block) != 0 {
-			t.Errorf("Expected 0 locks after concurrent unlocks, got %d", lt.GetLockVal(*block))
+		if lt.GetLockVal(block) != 0 {
+			t.Errorf("Expected 0 locks after concurrent unlocks, got %d", lt.GetLockVal(block))
 		}
 	})
 
 	t.Run("XLock Prevents Concurrent Access", func(t *testing.T) {
-		err := lt.XLock(*block)
+		err := lt.XLock(block)
 		if err != nil {
 			t.Errorf("Failed to acquire XLock: %v", err)
 		}
@@ -208,8 +208,8 @@ func TestConcurrency(t *testing.T) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				err := lt.SLock(*block)
-				if err != nil && err != tx.ErrLockTimeout {
+				err := lt.SLock(block)
+				if err != nil && err != tx.LockAbortError {
 					errorChan <- err
 				}
 			}()
