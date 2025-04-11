@@ -19,7 +19,7 @@ func NewProductScan(s1, s2 interfaces.Scan) *ProductScan {
 		s2: s2,
 	}
 
-	s1.Next() // Position at first record of s1
+	s1.BeforeFirst() // Position at first record of s1
 	return ps
 }
 
