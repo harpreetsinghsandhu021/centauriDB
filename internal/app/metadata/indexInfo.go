@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"centauri/internal/app/index"
 	"centauri/internal/app/index/hash"
 	"centauri/internal/app/record"
 	sch "centauri/internal/app/record/schema"
@@ -37,7 +38,7 @@ func NewIndexInfo(idxName string, fldName string, tableSchema *sch.Schema, tx *t
 // Open creates and returns a new HashIndex instance for this index.
 // It initializes the index using the transaction, index name and layout
 // stored in the IndexInfo struct.
-func (ii *IndexInfo) Open() interface{} {
+func (ii *IndexInfo) Open() index.Index {
 	return hash.NewHashIndex(ii.tx, ii.idxName, ii.idxLayout)
 }
 

@@ -14,7 +14,7 @@ type SelectPlan struct {
 	pred *query.Predicate // The predicate used for filtering records
 }
 
-func NewSelectPlan(p interfaces.Plan, pred *query.Predicate) *SelectPlan {
+func NewSelectPlan(p interfaces.Plan, pred *query.Predicate) interfaces.Plan {
 	return &SelectPlan{
 		p:    p,
 		pred: pred,

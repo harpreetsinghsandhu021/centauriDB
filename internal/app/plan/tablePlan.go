@@ -11,14 +11,14 @@ import (
 // TablePlan represents a basic table access plan in a query execution.
 // It implements the Plan interface and provides access to table-level operations.
 type TablePlan struct {
-	// Plan
+	interfaces.Plan
 	tx        *tx.Transaction
 	tableName string
 	layout    *record.Layout
 	si        *metadata.StatInfo
 }
 
-func NewTablePlan(tx *tx.Transaction, tableName string, md *metadata.MetaDataManager) *TablePlan {
+func NewTablePlan(tx *tx.Transaction, tableName string, md *metadata.MetaDataManager) interfaces.Plan {
 
 	layout := md.GetLayout(tableName, tx)
 	si := md.GetStatInfo(tableName, layout, tx)
