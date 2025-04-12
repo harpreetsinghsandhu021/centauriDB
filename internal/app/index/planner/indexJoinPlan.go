@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"centauri/internal/app/index/query"
 	"centauri/internal/app/interfaces"
 	"centauri/internal/app/metadata"
 	"centauri/internal/app/record"
@@ -41,7 +42,7 @@ func (ijp *IndexJoinPlan) Open() interfaces.Scan {
 	}
 
 	idx := ijp.ii.Open()
-	return NewIndexJoinScan(s, idx, ijp.joinField, ts)
+	return query.NewIndexJoinScan(s, idx, ijp.joinField, ts)
 }
 
 // Estimates the number of block accesses to compute the join.

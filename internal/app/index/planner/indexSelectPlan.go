@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"centauri/internal/app/index/query"
 	"centauri/internal/app/interfaces"
 	"centauri/internal/app/metadata"
 	"centauri/internal/app/record"
@@ -27,14 +28,15 @@ func NewIndexSelectPlan(p interfaces.Plan, ii *metadata.IndexInfo, val types.Con
 
 // Creates a new indexselect scan for this query.
 // It panics if the underlying plan is not a TableScan.
-func (isp *IndexSelectPlan) Open() interfaces.Scan {
+func (isp *IndexSelectPlan) Open() *query.IndexSelectScan {
 	ts, ok := isp.p.Open().(*record.TableScan)
 	if !ok {
 		panic("IndexSelectPlan requires a TableScan as input")
 	}
 
 	idx := isp.ii.Open()
-	return newIndexSelectScan(ts, idx, isp.val)
+
+	return query.NewIndexSelectScan(ts, idx, isp.val)
 }
 
 // The number of block accesses to compute the index selection, which
