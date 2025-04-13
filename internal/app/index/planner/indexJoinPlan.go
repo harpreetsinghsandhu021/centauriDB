@@ -11,6 +11,7 @@ import (
 // Represents a plan node for index join operations.
 // It corresponds to the indexjoin relational algebra operator.
 type IndexJoinPlan struct {
+	interfaces.Plan
 	p1        interfaces.Plan
 	p2        interfaces.Plan
 	ii        *metadata.IndexInfo
@@ -18,7 +19,7 @@ type IndexJoinPlan struct {
 	schema    *schema.Schema
 }
 
-func NewIndexJoinPlan(p1 interfaces.Plan, p2 interfaces.Plan, ii *metadata.IndexInfo, joinField string) *IndexJoinPlan {
+func NewIndexJoinPlan(p1 interfaces.Plan, p2 interfaces.Plan, ii *metadata.IndexInfo, joinField string) interfaces.Plan {
 	sch := schema.NewSchema()
 	sch.AddAll(p1.Schema())
 	sch.AddAll(p2.Schema())

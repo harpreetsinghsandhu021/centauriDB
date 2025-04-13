@@ -16,7 +16,7 @@ type MultibufferProductPlan struct {
 	schema schema.Schema
 }
 
-func NewMultiBufferProductPlan(tx *tx.Transaction, lhs, rhs interfaces.Plan) *MultibufferProductPlan {
+func NewMultiBufferProductPlan(tx *tx.Transaction, lhs, rhs interfaces.Plan) interfaces.Plan {
 	schema := schema.NewSchema()
 	// Materialize the lhs for better performance
 	materializedLHS := materialize.NewMaterializePlan(tx, lhs)
@@ -85,8 +85,8 @@ func (p *MultibufferProductPlan) DistinctValues(fieldName string) int {
 }
 
 // Returns the schema of the product, which is the union of the schemas of the underlying queries.
-func (p *MultibufferProductPlan) Schema() schema.Schema {
-	return p.schema
+func (p *MultibufferProductPlan) Schema() *schema.Schema {
+	return &p.schema
 }
 
 // Copies all records from the specified plan into a newly created temp table.
