@@ -16,11 +16,12 @@ import (
 // - Useful for expensive subqueries that are referenced multiple times
 // - Implements the Plan interface for integration with query execution
 type MaterializePlan struct {
+	interfaces.Plan
 	srcPlan interfaces.Plan
 	tx      *tx.Transaction
 }
 
-func NewMaterializePlan(tx *tx.Transaction, srcPlan interfaces.Plan) *MaterializePlan {
+func NewMaterializePlan(tx *tx.Transaction, srcPlan interfaces.Plan) interfaces.Plan {
 	return &MaterializePlan{
 		srcPlan: srcPlan,
 		tx:      tx,
@@ -80,6 +81,6 @@ func (mp *MaterializePlan) DistinctValues(fieldName string) int {
 	return mp.srcPlan.DistinctValues(fieldName)
 }
 
-func (mp *MaterializePlan) Schema(fieldName string) *schema.Schema {
+func (mp *MaterializePlan) Schema() *schema.Schema {
 	return mp.srcPlan.Schema()
 }

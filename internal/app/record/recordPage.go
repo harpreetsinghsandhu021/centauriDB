@@ -89,7 +89,7 @@ func (rp *RecordPage) delete(slot int) {
 }
 
 // Returns the next used slot after the specified slot
-func (rp *RecordPage) nextAfter(slot int) int {
+func (rp *RecordPage) NextAfter(slot int) int {
 	return rp.searchAfter(slot, USED)
 }
 
