@@ -18,7 +18,7 @@ type IndexSelectPlan struct {
 	val types.Constant
 }
 
-func NewIndexSelectPlan(p interfaces.Plan, ii *metadata.IndexInfo, val types.Constant) *IndexSelectPlan {
+func NewIndexSelectPlan(p interfaces.Plan, ii *metadata.IndexInfo, val types.Constant) interfaces.Plan {
 	return &IndexSelectPlan{
 		p:   p,
 		ii:  ii,
@@ -28,7 +28,7 @@ func NewIndexSelectPlan(p interfaces.Plan, ii *metadata.IndexInfo, val types.Con
 
 // Creates a new indexselect scan for this query.
 // It panics if the underlying plan is not a TableScan.
-func (isp *IndexSelectPlan) Open() *query.IndexSelectScan {
+func (isp *IndexSelectPlan) Open() interfaces.Scan {
 	ts, ok := isp.p.Open().(*record.TableScan)
 	if !ok {
 		panic("IndexSelectPlan requires a TableScan as input")

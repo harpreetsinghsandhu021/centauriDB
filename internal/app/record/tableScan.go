@@ -51,7 +51,7 @@ func (ts *TableScan) BeforeFirst() {
 // Returns false if there are no more records
 func (ts *TableScan) Next() bool {
 	// Try to move to next slot in the current block
-	ts.currentSlot = ts.rp.nextAfter(ts.currentSlot)
+	ts.currentSlot = ts.rp.NextAfter(ts.currentSlot)
 
 	// If no more slots in current block
 	if ts.currentSlot < 0 {

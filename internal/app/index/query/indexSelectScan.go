@@ -16,7 +16,7 @@ type IndexSelectScan struct {
 	val types.Constant
 }
 
-func NewIndexSelectScan(ts *record.TableScan, idx index.Index, val types.Constant) *IndexSelectScan {
+func NewIndexSelectScan(ts *record.TableScan, idx index.Index, val types.Constant) interfaces.Scan {
 	scan := &IndexSelectScan{
 		ts:  ts,
 		idx: idx,
@@ -54,8 +54,8 @@ func (iss *IndexSelectScan) GetString(fldName string) string {
 	return iss.ts.GetString(fldName)
 }
 
-func (iss *IndexSelectScan) GetVal(fldName string) types.Constant {
-	return *iss.ts.GetVal(fldName)
+func (iss *IndexSelectScan) GetVal(fldName string) *types.Constant {
+	return iss.ts.GetVal(fldName)
 }
 
 func (iss *IndexSelectScan) HasField(fldName string) bool {
